@@ -8,23 +8,27 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.getThePassword = exports.configureDatabase2 = void 0;
-let db;
-const configureDatabase2 = (connection) => {
-    db = connection;
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
 };
-exports.configureDatabase2 = configureDatabase2;
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.getThePassword = void 0;
+const db_connection_1 = __importDefault(require("../../dtservice/db.connection"));
 const getThePassword = () => __awaiter(void 0, void 0, void 0, function* () {
-    const sql = 'SELECT * FROM easter_egg LIMIT 1';
-    const [rows] = yield db.promise().execute(sql);
-    if (Array.isArray(rows) && rows.length > 0) {
-        const row = rows[0];
-        const password = row.easterpassword;
-        return { password };
+    try {
+        const sql = 'SELECT easterpassword FROM easter_egg LIMIT 1';
+        const [rows] = yield db_connection_1.default.promise().execute(sql);
+        if (Array.isArray(rows) && rows.length > 0) {
+            const row = rows[0];
+            return { password: row.easterpassword };
+        }
+        else {
+            return null;
+        }
     }
-    else {
-        return null;
+    catch (err) {
+        console.error('Error al obtener la contraseña: ', err);
+        throw new Error('Error al obtener la contraseña');
     }
 });
 exports.getThePassword = getThePassword;

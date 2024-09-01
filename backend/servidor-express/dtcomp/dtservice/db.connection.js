@@ -4,7 +4,8 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const mysql2_1 = __importDefault(require("mysql2"));
-const user_model_1 = require("../models/usermodel/user.model");
+const dotenv_1 = __importDefault(require("dotenv"));
+dotenv_1.default.config();
 const db = mysql2_1.default.createConnection({
     host: process.env.DB_HOST,
     user: process.env.DB_USER,
@@ -17,6 +18,6 @@ db.connect((err) => {
     }
     else {
         console.log('Conexión exitosa a la base de datos');
-        (0, user_model_1.configureDatabase)(db);
     }
 });
+exports.default = db;

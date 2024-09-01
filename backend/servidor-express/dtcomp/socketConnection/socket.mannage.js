@@ -16,7 +16,7 @@ function configureSocket(server) {
     return __awaiter(this, void 0, void 0, function* () {
         const io = new socket_io_1.Server(server, {
             cors: {
-                origin: 'http://localhost:5173',
+                origin: process.env.FRONTEND_URL,
             },
         });
         io.on('connection', (socket) => __awaiter(this, void 0, void 0, function* () {
@@ -36,8 +36,13 @@ function configureSocket(server) {
             socket.on('disconnect', () => {
                 console.log('Client disconnected:', socket.id);
             });
-            const updatedUserList = yield (0, chat_controller_1.getUserList)();
-            io.emit('userList', updatedUserList);
+            try {
+                const userList = yield (0, chat_controller_1.getUserList)();
+                io.to(socket.id).emit('userList', userList);
+            }
+            catch (error) {
+                console.error('Error fetching user list:', error);
+            }
         }));
     });
 }

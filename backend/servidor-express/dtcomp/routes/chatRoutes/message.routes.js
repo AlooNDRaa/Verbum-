@@ -12,22 +12,30 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.setupEggRoutesWithDb = void 0;
+exports.messageRoutes = void 0;
 const express_1 = __importDefault(require("express"));
-const egg_controller_1 = require("../../controllers/eegcontroller/egg.controller");
+const ChatController_1 = require("../../controllers/chatController/ChatController");
 const router = express_1.default.Router();
-const setupEggRoutesWithDb = () => {
-    router.use(express_1.default.json());
-    router.post('/password', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+const messageRoutes = () => {
+    router.post('/message', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+        const { content, userId } = req.body;
         try {
-            yield (0, egg_controller_1.checkPassword)(req, res);
+            const message = yield (0, ChatController_1.handleChatMessage)({ content, userId });
+            res.status(200).json(message);
         }
-        catch (err) {
-            console.error('Error en la ruta /password: ', err);
-            res.status(500).json({ message: 'Error en el servidor' });
+        catch (error) {
+            res.status(500).json({ message: 'Error al manejar el mensaje' });
         }
     }));
-    router.get('/secret-password', (req, res) => (0, egg_controller_1.getSecretPassword)(req, res));
+    router.get('/messages', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+        try {
+            const messages = yield (0, ChatController_1.getAllMessages)(req, res);
+            res.status(200).json(messages);
+        }
+        catch (error) {
+            res.status(500).json({ message: 'Error al obtener los mensajes' });
+        }
+    }));
     return router;
 };
-exports.setupEggRoutesWithDb = setupEggRoutesWithDb;
+exports.messageRoutes = messageRoutes;

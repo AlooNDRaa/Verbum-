@@ -1,27 +1,4 @@
 "use strict";
-var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    var desc = Object.getOwnPropertyDescriptor(m, k);
-    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
-      desc = { enumerable: true, get: function() { return m[k]; } };
-    }
-    Object.defineProperty(o, k2, desc);
-}) : (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    o[k2] = m[k];
-}));
-var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
-    Object.defineProperty(o, "default", { enumerable: true, value: v });
-}) : function(o, v) {
-    o["default"] = v;
-});
-var __importStar = (this && this.__importStar) || function (mod) {
-    if (mod && mod.__esModule) return mod;
-    var result = {};
-    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
-    __setModuleDefault(result, mod);
-    return result;
-};
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -32,13 +9,23 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.checkPassword = void 0;
-const EggModel = __importStar(require("../../models/egmodel/egg.model"));
+exports.getSecretPassword = exports.checkPassword = void 0;
+const egg_model_1 = require("../../models/egmodel/egg.model");
 const checkPassword = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { password } = req.body;
-        const easterEgg = yield EggModel.getThePassword();
-        if (easterEgg) {
+        if (!password) {
+            res.status(400).json({ message: 'Contraseña no proporcionada' });
+            return;
+        }
+        const storedEgg = yield (0, egg_model_1.getThePassword)();
+        if (!storedEgg) {
+            res.status(404).json({ message: 'Contraseña no encontrada' });
+            return;
+        }
+        const { password: storedPassword } = storedEgg;
+        // Comparar directamente las contraseñas
+        if (password === storedPassword) {
             res.status(200).json({ message: 'Contraseña correcta' });
         }
         else {
@@ -51,3 +38,18 @@ const checkPassword = (req, res) => __awaiter(void 0, void 0, void 0, function* 
     }
 });
 exports.checkPassword = checkPassword;
+const getSecretPassword = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const storedEgg = yield (0, egg_model_1.getThePassword)();
+        if (!storedEgg) {
+            res.status(404).json({ message: 'Contraseña no encontrada' });
+            return;
+        }
+        res.status(200).json({ password: storedEgg.password });
+    }
+    catch (err) {
+        console.error('Error al obtener la contraseña: ', err);
+        res.status(500).json({ message: 'Error en el servidor' });
+    }
+});
+exports.getSecretPassword = getSecretPassword;

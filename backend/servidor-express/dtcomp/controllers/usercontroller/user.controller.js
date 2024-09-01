@@ -71,7 +71,6 @@ const loginUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
                 expiresIn: '3m'
             });
             res.send({ token });
-            // res.status(200).json({ message: 'Inicio de sesión exitoso' });
             console.log(token);
         }
         else {

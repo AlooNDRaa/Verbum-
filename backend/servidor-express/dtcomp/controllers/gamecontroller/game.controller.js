@@ -49,7 +49,6 @@ exports.getGameUsers = getGameUsers;
 const saveMovimientos = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { board, turn } = req.body;
-        // Guarda los movimientos en la base de datos utilizando el modelo correspondiente
         yield gamemodel.saveMovimientos(board, turn);
         res.status(200).json({ message: 'Movimientos guardados en la base de datos' });
     }

@@ -1,10 +1,12 @@
-import { Connection, RowDataPacket } from 'mysql2'; 
+import { RowDataPacket } from 'mysql2';
+import db from '../../dtservice/db.connection';
 
-let db: Connection;
-
-export const configureDatabase = (connection: Connection): void => {
-  db = connection;
-};
+export interface User {
+  id: number;
+  username: string;
+  email: string;
+  password: string;
+}
 
 export const getAllUsers = async (): Promise<RowDataPacket[]> => {
   const sql: string = 'SELECT * FROM users';
