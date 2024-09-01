@@ -9,6 +9,8 @@ export const handleChatMessage = async (data: { content: string, userId: number 
 
     const user = await getUserById(userId);
 
+    //cambios
+
     return { content, userId, username: user?.username };
   } catch (error) {
     console.error('Error al manejar el mensaje: ', error);
