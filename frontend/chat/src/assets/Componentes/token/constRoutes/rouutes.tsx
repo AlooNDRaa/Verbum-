@@ -3,12 +3,12 @@ import { ProtectedRoute } from "../protectedRoute/ProtectedRoute";
 import { Login } from "../../../pages/login";
 import { Error404 } from "../../../pages/errorpage";
 import Home from "../../../pages/home";
-import Chat from "../../../pages/chat";
 import Blog from "../../../pages/blog";
-import { GameCYR } from "../../../pages/game";
+// import { GameCYR } from "../../../pages/game";
 import { ThePrivatePage } from "../../../pages/private";
 import { useAuth } from "../auth/authprovider";
-import Chatopen from "../../chat/chatOpen";
+import { Chat } from "../../chat/Chat";
+// import Chatopen from "../../chat/chatOpen";
 
 
 export const Routees = () => {
@@ -45,7 +45,7 @@ const routesForOnlyAuth = [
         },
         {
             path:"/game",
-            element: <GameCYR/>,
+            // element: <GameCYR/>,
         },
         {
             path:"/pvp",
@@ -53,7 +53,7 @@ const routesForOnlyAuth = [
         },
         {
             path:"/chatopen",
-            element: <Chatopen/>,
+            // element: <Chatopen/>,
         },
     ],
 },

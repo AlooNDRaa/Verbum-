@@ -1,12 +1,12 @@
-import Chatuser from "../Componentes/chat/chatanduser/userchats";
+// import Chatuser from "../Componentes/chat/chatanduser/userchats";
 
-function Chat() {
+// function Chat() {
 
-  return (
-    <div className='flex items-stretch bg-[#101015]'>
-      <Chatuser/>
-    </div>
-  )
-}
+//   return (
+//     <div className='flex items-stretch bg-[#101015]'>
+//       <Chatuser/>
+//     </div>
+//   )
+// }
 
-export default Chat
+// export default Chat

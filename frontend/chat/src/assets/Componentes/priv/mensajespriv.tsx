@@ -3,7 +3,7 @@ import IconChat from '../../imgs/Group 5.svg'
 import io from "socket.io-client";
 import { Link } from "react-router-dom";
 
-const Socket = io('/');
+const Socket = io(import.meta.env.VITE_BACKEND_URL);
 
 function Mensajes() {
   const [chat, setChat] = useState<string>("");

@@ -20,6 +20,7 @@
     "axios": "^1.6.2",
     "babel-jest": "^29.7.0",
     "canvas-confetti": "^1.9.2",
+    "chat": "file:",
     "dotenv": "^16.3.1",
     "jest-environment-jsdom": "^29.7.0",
     "jest-svg-transformer": "^1.0.0",
