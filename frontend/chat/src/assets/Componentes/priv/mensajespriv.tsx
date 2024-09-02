@@ -57,8 +57,8 @@ function Mensajes() {
           </button>
         </form>
         <ul className="lg:w-[49rem] flex flex-col justify-center border-2 fixed  rounded-xl border-red-800 py-3 h-[490px] overflow-y-auto">
-          {chats.map((chat, i) => (
-            <li className={`text-white text-1xl p-8  rounded-md ${chat.from === 'Anonimus' ? ' ml-[22vw]' : ' mr-[5vw]'}`} key={i}>
+          {chats.map((chat, index2) => (
+        <li key={`${chat.from}-${chat.body}-${index2}`} className={`text-white text-1xl p-8 rounded-md ${chat.from === 'Anonimus' ? ' ml-[22vw]' : ' mr-[5vw]'}`}>
               <span className="font-semibold text-red-400 block">{chat.from}</span>{" "}
               <span className="text-sm text-white">{chat.body}</span>
             </li>

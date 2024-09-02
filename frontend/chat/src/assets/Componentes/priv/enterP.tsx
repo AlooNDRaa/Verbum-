@@ -73,7 +73,7 @@ export function EnterPas() {
                 ǝıp puɐ ɹǝʇuƎ
               </button>
               {error && (
-                <p className="text-red-500 text-center mt-4">{error}</p> // Mostrar mensaje de error
+                <p className="text-red-500 text-center mt-4">{error}</p> 
               )}
             </div>
           </form>

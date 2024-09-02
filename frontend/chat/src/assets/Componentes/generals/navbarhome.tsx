@@ -3,22 +3,22 @@ import { FaTimes } from 'react-icons/fa';
 import { CiMenuFries } from 'react-icons/ci';
 import Logo from '../../imgs/verbumlog.png';
 import { Link, useNavigate } from 'react-router-dom';
-import { useAuth } from '../token/auth/authprovider';
+import UseAuth from '../token/useAuth/UseAuth';
 
 
 function Navbar(): JSX.Element {
 
   const [click, setClick] = useState(false);
     const handleClick = () => setClick(!click);
-  useAuth();
+  UseAuth();
   const navigate = useNavigate();
 
   const handleLogoutClick = () => {
-    localStorage.removeItem('token');
-        navigate("/", { replace: true });
+    sessionStorage.removeItem('token');  
+    navigate("/", { replace: true });
   };
 
-    const content = <>
+    const content = <div>
        <div className="lg:hidden block absolute bg-[#000] bg-opacity-90  top-0 left-0 right-0 transition rounded-md">
           <ul className='text-center text-x1 p-7 h-screen'>
           <Link to="/home">
@@ -42,7 +42,7 @@ function Navbar(): JSX.Element {
               </div>  
           </ul>
         </div>
-     </>
+     </div>
 
 
     return (

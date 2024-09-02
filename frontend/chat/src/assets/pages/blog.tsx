@@ -31,7 +31,7 @@ function Blog() {
   ];
 
   return (
-    <>
+    <div>
       <div className='bg-[#101015] grid relative '>
             <Navbar/>
             <div className="mt-9 ">
@@ -46,7 +46,7 @@ function Blog() {
             <Tools/>
             <Footer/>
       </div>
-    </>
+    </div>
   )
 }
 

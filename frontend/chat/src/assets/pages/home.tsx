@@ -7,7 +7,7 @@ import { Link } from 'react-router-dom';
 
 function Home() {
     return (
-    <>
+    <div>
         <div className='bg-[#101015] relative h-screen'>
             <Navbar/>
             <div className='grid xl:grid-cols-2 xl:gap-[10rem] pt-[7rem]'>
@@ -37,7 +37,7 @@ function Home() {
                 <Footer/>
             </div>
         </div>
-    </>
+    </div>
     );
 }
             

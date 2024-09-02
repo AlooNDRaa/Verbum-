@@ -1,48 +1,75 @@
-/* eslint-disable react-refresh/only-export-components */
+import { createContext, useMemo, useState, useEffect } from 'react';
+import { jwtDecode } from 'jwt-decode'; 
 import axios from 'axios';
-import { ReactNode, createContext, useContext, useEffect, useMemo, useState } from 'react';
+
+interface User {
+    email: string;
+    id: number;
+}
+
+interface DecodedToken {
+    email: string;
+    userId: number;
+}
 
 interface AuthContextProps {
-  token: string | null;
-  setToken: React.Dispatch<React.SetStateAction<string | null>>;
+    token: string | null;
+    user: User | null;
+    setToken: (newToken: string | null) => void;
+    logout: () => void;
 }
 
 const AuthContext = createContext<AuthContextProps | undefined>(undefined);
 
-export const AuthProvider = ({ children }: { children: ReactNode }) => {
-  const [token, setToken_] = useState(localStorage.getItem('token'));
+export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+    const [token, setToken_] = useState<string | null>(() => sessionStorage.getItem('token'));
+    const [user, setUser] = useState<User | null>(null);
 
-  const setToken = (newToken: React.SetStateAction<string | null>) => {
-    setToken_(newToken);
-  };
+    const setToken = (newToken: string | null): void => {
+        setToken_(newToken);
+        if (newToken) {
+            const decodedToken: DecodedToken = jwtDecode<DecodedToken>(newToken); // Especificamos el tipo DecodedToken
+            const userData: User = {
+                email: decodedToken.email,
+                id: decodedToken.userId,
+            };
+            setUser(userData);
+        } else {
+            setUser(null);
+        }
+    };
 
-  useEffect(() => {
-    if (token) {
-      axios.defaults.headers.common['Authorization'] = 'Bearer ' + token;
-      localStorage.setItem('token', token);
-    } else {
-      delete axios.defaults.headers.common['Authorization'];
-      localStorage.removeItem('token');
-    }
-  }, [token]);
+    const logout = (): void => {
+        setToken(null);
+        setUser(null);
+    };
 
-  const contextValue = useMemo(
-    () => ({
-      token,
-      setToken,
-    }),
-    [token]
-  );
+    useEffect(() => {
+        if (token) {
+            axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+            sessionStorage.setItem('token', token);
+        } else {
+            delete axios.defaults.headers.common['Authorization'];
+            sessionStorage.removeItem('token');
+        }
+    }, [token]);
 
-  return <AuthContext.Provider value={contextValue}>{children}</AuthContext.Provider>;
+    const contextValue = useMemo<AuthContextProps>(
+        () => ({
+            token,
+            user,
+            setToken,
+            logout,
+        }),
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+        [token, user]
+    );
+
+    return (
+        <AuthContext.Provider value={contextValue}>
+            {children}
+        </AuthContext.Provider>
+    );
 };
 
-export const useAuth = () => {
-  const context = useContext(AuthContext);
-  if (!context) {
-    throw new Error('useAuth must be used within an AuthProvider');
-  }
-  return context;
-};
-
-export default AuthProvider;
+export default AuthContext;

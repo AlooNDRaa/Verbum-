@@ -4,15 +4,13 @@ import { Login } from "../../../pages/login";
 import { Error404 } from "../../../pages/errorpage";
 import Home from "../../../pages/home";
 import Blog from "../../../pages/blog";
-// import { GameCYR } from "../../../pages/game";
 import { ThePrivatePage } from "../../../pages/private";
-import { useAuth } from "../auth/authprovider";
 import { Chat } from "../../chat/Chat";
-// import Chatopen from "../../chat/chatOpen";
+import UseAuth from "../useAuth/UseAuth";
 
 
 export const Routees = () => {
-    const { token } = useAuth();
+    const { token } = UseAuth();
 
 
 const routesForThePublic = [
@@ -50,10 +48,6 @@ const routesForOnlyAuth = [
         {
             path:"/pvp",
             element: <ThePrivatePage/>,
-        },
-        {
-            path:"/chatopen",
-            // element: <Chatopen/>,
         },
     ],
 },

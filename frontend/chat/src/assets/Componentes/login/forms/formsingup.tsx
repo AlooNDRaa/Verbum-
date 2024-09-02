@@ -21,7 +21,7 @@ export default function Form2() {
       return;
     }
     try {
-      const response = await fetch('http://localhost:3000/newuser', {
+      const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/newuser`, {
         method: 'POST',
         headers: {
           "Content-Type": "application/json",

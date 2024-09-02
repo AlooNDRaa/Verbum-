@@ -1,27 +1,15 @@
 import { SetStateAction, useEffect, useState } from 'react';
 import { ModalShow } from '../forgotpassword/openmodal';
-import { parseJwt }  from '../../token/jwtoken'
-import { Navigate, useNavigate } from 'react-router-dom';
-import { useAuth } from '../../token/auth/authprovider';
+import {  useNavigate } from 'react-router-dom';
+import UseAuth from '../../token/useAuth/UseAuth';
 
 export default function LoginForm() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [loginSuccessful, setLoginSuccesful] = useState(false)
+  const [loginSuccessful, setLoginSuccessful] = useState(false);
 
-  const { setToken } = useAuth();
+  const { setToken } = UseAuth();
   const navigate = useNavigate();
-
-  useEffect(() => {
-    const handleLogin = () => {
-      setToken("this is a test token");
-      navigate("/home", { replace: true });
-    };
-
-    setTimeout(() => {
-      handleLogin();
-    }, 4 * 1000);
-  }, [navigate, setToken]); 
 
   const handleEmailChange = (e: { target: { value: SetStateAction<string> }; }) => {
     setEmail(e.target.value);
@@ -35,7 +23,7 @@ export default function LoginForm() {
     e.preventDefault();
 
     try {
-      const response = await fetch('http://localhost:3000/login', {
+      const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/login`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -46,23 +34,22 @@ export default function LoginForm() {
       if (response.status === 200) {
         console.log("Acceso permitido");
         const result = await response.json();
-        localStorage.setItem('token', result.token);
-        setLoginSuccesful(true)
-        const parsedToken = parseJwt(result.token);
-        console.log(parsedToken);
+        setToken(result.token); 
+        setLoginSuccessful(true); 
       } else {
         console.error('Acceso denegado');
-        setLoginSuccesful(false)
+        setLoginSuccessful(false);
       }
     } catch (error) {
       console.error('Error al enviar la solicitud:', error);
     }
   };
 
-  if (loginSuccessful) {
-    return <Navigate to="/home" />;
-  }
-
+  useEffect(() => {
+    if (loginSuccessful) {
+      navigate("/home", { replace: true });
+    }
+  }, [loginSuccessful, navigate]);
 
   return (
     <div className="text-white lg:w-1/2">
@@ -97,12 +84,12 @@ export default function LoginForm() {
               <input type="checkbox" id="remember" />
               <label className="ml-2 font-medium text-base" htmlFor="remember"> Remember me</label>
             </div>
-            <ModalShow/>
+            <ModalShow />
           </div>
           <div className="mt-8 flex flex-col gap-y-4">
             <button
-            type="submit"
-            className="bg-pink-600 text-white text-lg font-bold rounded-xl py-2 active:scale-[.98] active:duration-75 transition-all hover:scale-[1.01] ease-in-out">
+              type="submit"
+              className="bg-pink-600 text-white text-lg font-bold rounded-xl py-2 active:scale-[.98] active:duration-75 transition-all hover:scale-[1.01] ease-in-out">
               Sign in
             </button>
           </div>

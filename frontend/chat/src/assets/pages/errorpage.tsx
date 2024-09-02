@@ -2,7 +2,7 @@ import { Link } from 'react-router-dom'
 
 export function Error404() {
     return (
-        <>
+        <div>
         <div className="bg-[#101015] grid h-screen text-white">
            <div className="flex mx-2 lg:mx-0 flex-col lg:flex-row items-center justify-center">
             <div>
@@ -27,6 +27,6 @@ export function Error404() {
              </div>
            </div>
         </div>
-        </>
+        </div>
     )
 }
