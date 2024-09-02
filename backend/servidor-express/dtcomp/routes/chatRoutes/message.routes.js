@@ -15,10 +15,12 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.messageRoutes = void 0;
 const express_1 = __importDefault(require("express"));
 const ChatController_1 = require("../../controllers/chatController/ChatController");
+const JwtMiddlewareToken_1 = require("../../middleware/JwtMiddlewareToken");
 const router = express_1.default.Router();
 const messageRoutes = () => {
-    router.post('/message', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-        const { content, userId } = req.body;
+    router.post('/message', JwtMiddlewareToken_1.authenticateToken, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+        const { content } = req.body;
+        const userId = req.user.userId;
         try {
             const message = yield (0, ChatController_1.handleChatMessage)({ content, userId });
             res.status(200).json(message);

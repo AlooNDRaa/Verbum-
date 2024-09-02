@@ -1,19 +1,22 @@
 import express, { Router } from 'express';
 import { getAllMessages, handleChatMessage } from '../../controllers/chatController/ChatController';
+import { authenticateToken } from '../../middleware/JwtMiddlewareToken';
 
 const router: Router = express.Router();
 
 export const messageRoutes = () => {
-router.post('/message', async (req, res) => {
-  const { content, userId } = req.body;
-
-  try {
-    const message = await handleChatMessage({ content, userId });
-    res.status(200).json(message);
-  } catch (error) {
-    res.status(500).json({ message: 'Error al manejar el mensaje' });
-  }
-});
+  router.post('/message', authenticateToken, async (req, res) => {
+    const { content } = req.body;
+    const userId = (req as any).user.userId; 
+  
+    try {
+      const message = await handleChatMessage({ content, userId });
+      res.status(200).json(message);
+    } catch (error) {
+      res.status(500).json({ message: 'Error al manejar el mensaje' });
+    }
+  });
+  
 
 router.get('/messages', async (req, res) => {
   try {

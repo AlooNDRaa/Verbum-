@@ -1,5 +1,7 @@
 import { RowDataPacket } from 'mysql2';
 import db from '../../dtservice/db.connection';
+import bcrypt from 'bcrypt';
+import  jwt  from 'jsonwebtoken';
 
 export interface User {
   id: number;
@@ -15,7 +17,9 @@ export const getAllUsers = async (): Promise<RowDataPacket[]> => {
 
 export const createUser = async (username: string, email: string, password: string): Promise<void> => {
   const sql = 'INSERT INTO users (username, email, password) VALUES (?, ?, ?)';
-  const values = [username, email, password];
+  
+  const hashedPassword = await bcrypt.hash(password, 10);
+  const values = [username, email, hashedPassword];
 
   try {
     await db.promise().execute(sql, values);
@@ -26,8 +30,24 @@ export const createUser = async (username: string, email: string, password: stri
   }
 };
 
-export const loginUser = async (email: string, password: string): Promise<any> => {
-  const sql = 'SELECT * FROM users WHERE email = ? AND password = ?';
-  const values = [email, password];
-  return db.promise().execute(sql, values);
+
+const secretKey = process.env.SECRET_KEY;
+
+export const loginUser = async (email: string, password: string): Promise<{ token: string } | null> => {
+  const sql = 'SELECT * FROM users WHERE email = ?';
+  const [rows] = await db.promise().execute(sql, [email]);
+  
+  if (Array.isArray(rows) && rows.length > 0) {
+    const user: User = rows[0] as User;
+    
+    const passwordMatch = await bcrypt.compare(password, user.password);
+    
+    if (passwordMatch && secretKey) {
+      const token = jwt.sign({ userId: user.id, email: user.email }, secretKey, { expiresIn: '1h' });
+      return { token };
+    }
+  }
+  
+  console.log('Usuario no encontrado o contraseña incorrecta.');
+  return null; 
 };

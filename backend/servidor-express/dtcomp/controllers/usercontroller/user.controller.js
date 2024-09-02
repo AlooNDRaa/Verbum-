@@ -31,13 +31,9 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.loginUser = exports.createUser = exports.getAllUsers = void 0;
 const UserModel = __importStar(require("../../models/usermodel/user.model"));
-const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const getAllUsers = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const users = yield UserModel.getAllUsers();
@@ -66,20 +62,17 @@ const loginUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { email, password } = req.body;
     try {
         const result = yield UserModel.loginUser(email, password);
-        if (result[0].length > 0) {
-            const token = jsonwebtoken_1.default.sign({ email }, "Stack", {
-                expiresIn: '3m'
-            });
-            res.send({ token });
-            console.log(token);
+        if (result) {
+            res.json(result);
+            console.log('Token generado:', result.token);
         }
         else {
-            res.status(401).json({ message: 'Wrong user' });
+            res.status(401).json({ message: 'Usuario no encontrado o contraseña incorrecta.' });
         }
     }
     catch (err) {
-        console.error('Error en la consulta: ' + err);
-        res.status(500).json({ message: 'Error en el servidor' });
+        console.error('Error en la autenticación: ' + err);
+        res.status(500).json({ message: 'Error en el servidor.' });
     }
 });
 exports.loginUser = loginUser;

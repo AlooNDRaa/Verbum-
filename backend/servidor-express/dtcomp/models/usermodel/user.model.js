@@ -14,6 +14,8 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.loginUser = exports.createUser = exports.getAllUsers = void 0;
 const db_connection_1 = __importDefault(require("../../dtservice/db.connection"));
+const bcrypt_1 = __importDefault(require("bcrypt"));
+const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const getAllUsers = () => __awaiter(void 0, void 0, void 0, function* () {
     const sql = 'SELECT * FROM users';
     return db_connection_1.default.promise().execute(sql).then(([rows]) => rows);
@@ -21,7 +23,8 @@ const getAllUsers = () => __awaiter(void 0, void 0, void 0, function* () {
 exports.getAllUsers = getAllUsers;
 const createUser = (username, email, password) => __awaiter(void 0, void 0, void 0, function* () {
     const sql = 'INSERT INTO users (username, email, password) VALUES (?, ?, ?)';
-    const values = [username, email, password];
+    const hashedPassword = yield bcrypt_1.default.hash(password, 10);
+    const values = [username, email, hashedPassword];
     try {
         yield db_connection_1.default.promise().execute(sql, values);
         console.log('Usuario creado exitosamente.');
@@ -32,9 +35,19 @@ const createUser = (username, email, password) => __awaiter(void 0, void 0, void
     }
 });
 exports.createUser = createUser;
+const secretKey = process.env.SECRET_KEY;
 const loginUser = (email, password) => __awaiter(void 0, void 0, void 0, function* () {
-    const sql = 'SELECT * FROM users WHERE email = ? AND password = ?';
-    const values = [email, password];
-    return db_connection_1.default.promise().execute(sql, values);
+    const sql = 'SELECT * FROM users WHERE email = ?';
+    const [rows] = yield db_connection_1.default.promise().execute(sql, [email]);
+    if (Array.isArray(rows) && rows.length > 0) {
+        const user = rows[0];
+        const passwordMatch = yield bcrypt_1.default.compare(password, user.password);
+        if (passwordMatch && secretKey) {
+            const token = jsonwebtoken_1.default.sign({ userId: user.id, email: user.email }, secretKey, { expiresIn: '1h' });
+            return { token };
+        }
+    }
+    console.log('Usuario no encontrado o contraseña incorrecta.');
+    return null;
 });
 exports.loginUser = loginUser;

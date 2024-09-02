@@ -1,6 +1,5 @@
 import { Request, Response } from 'express';
 import * as UserModel from '../../models/usermodel/user.model';
-import jwt from 'jsonwebtoken';
 
 export const getAllUsers = async (req: Request, res: Response): Promise<void> => {
   try {
@@ -33,17 +32,14 @@ export const loginUser = async (req: Request, res: Response): Promise<void> => {
   try {
     const result = await UserModel.loginUser(email, password);
 
-    if (result[0].length > 0) {
-      const token = jwt.sign({ email }, "Stack", {
-        expiresIn: '3m'
-      })
-      res.send({token});
-      console.log(token);
+    if (result) {
+      res.json(result); 
+      console.log('Token generado:', result.token);
     } else {
-      res.status(401).json({ message: 'Wrong user' });
+      res.status(401).json({ message: 'Usuario no encontrado o contraseña incorrecta.' });
     }
   } catch (err) {
-    console.error('Error en la consulta: ' + err);
-    res.status(500).json({ message: 'Error en el servidor' });
+    console.error('Error en la autenticación: ' + err);
+    res.status(500).json({ message: 'Error en el servidor.' });
   }
-};
+}

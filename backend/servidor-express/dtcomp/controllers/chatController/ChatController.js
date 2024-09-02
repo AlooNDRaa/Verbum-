@@ -16,7 +16,10 @@ const handleChatMessage = (data) => __awaiter(void 0, void 0, void 0, function* 
     try {
         yield (0, ChatModel_1.createMessage)(content, userId);
         const user = yield (0, ChatModel_1.getUserById)(userId);
-        return { content, userId, username: user === null || user === void 0 ? void 0 : user.username };
+        if (!user) {
+            return { content, userId, username: 'Desconocido' };
+        }
+        return { content, userId, username: user.username };
     }
     catch (error) {
         console.error('Error al manejar el mensaje: ', error);
